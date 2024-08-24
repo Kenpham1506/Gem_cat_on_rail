@@ -41,7 +41,9 @@ jobs:
         run: bundle exec jekyll build
 
       - name: Inject API key
-        run: echo "api_key: ${{ secrets.API_KEY }}" > _data/api_key.yml
+        run: |
+          mkdir -p _data
+          echo "api_key: ${{ secrets.API_KEY }}" > _data/api_key.yml
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
