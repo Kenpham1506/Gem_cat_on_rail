@@ -29,12 +29,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v2
+        with:
+          ruby-version: 3.1  # Adjust Ruby version if needed
 
-      - name: Set up Jekyll
+      - name: Install dependencies
         run: |
-          gem install bundler --user-install
+          gem install bundler
           bundle config set --local path 'vendor/bundle'
           bundle install --jobs 4 --retry 3
 
