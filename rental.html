@@ -5,55 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rental Detail</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Embed API key in a meta tag -->
+    <meta name="api-key" content="{{ site.data.api_key.api_key }}">
     <script>
-      // Embed the API key dynamically using Jekyll
-      const API_KEY = '{{ site.data.api_key.api_key }}';
-      const SPREADSHEET_ID = '1tr9EYkquStJozfVokqS1Ix_Ugwn7xfhUX9eOu6x5WEE';
-      const RANGE = 'Sheet1!A2:I'; // Adjust range to include District column
+      document.addEventListener('DOMContentLoaded', function() {
+          const API_KEY = document.querySelector('meta[name="api-key"]').getAttribute('content');
+          const SPREADSHEET_ID = '1tr9EYkquStJozfVokqS1Ix_Ugwn7xfhUX9eOu6x5WEE';
+          const RANGE = 'Sheet1!A2:I'; // Adjust range to include District column
 
-      function getRentalDetails() {
-          const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-          const params = new URLSearchParams(window.location.search);
-          const id = params.get('id');
+          function getRentalDetails() {
+              const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+              const params = new URLSearchParams(window.location.search);
+              const id = params.get('id');
 
-          fetch(url)
-              .then(response => {
-                  if (!response.ok) {
-                      throw new Error(`HTTP error! status: ${response.status}`);
-                  }
-                  return response.json();
-              })
-              .then(data => {
-                  const listings = data.values;
-                  const listing = listings[id];
-                  displayRentalDetails(listing);
-              })
-              .catch(error => console.error('Error fetching data:', error));
-      }
-
-      function displayRentalDetails(listing) {
-          if (!listing) {
-              document.getElementById('rental-detail').innerHTML = '<p>No details available.</p>';
-              return;
+              fetch(url)
+                  .then(response => {
+                      if (!response.ok) {
+                          throw new Error(`HTTP error! status: ${response.status}`);
+                      }
+                      return response.json();
+                  })
+                  .then(data => {
+                      const listings = data.values;
+                      const listing = listings[id];
+                      displayRentalDetails(listing);
+                  })
+                  .catch(error => console.error('Error fetching data:', error));
           }
 
-          const [name, address, price, imageUrl, description, host, phoneNumber, email, district] = listing;
+          function displayRentalDetails(listing) {
+              if (!listing) {
+                  document.getElementById('rental-detail').innerHTML = '<p>No details available.</p>';
+                  return;
+              }
 
-          const rentalDetailDiv = document.getElementById('rental-detail');
-          rentalDetailDiv.innerHTML = `
-              <h2>${name || 'No name'}</h2>
-              <p><strong>Address:</strong> ${address || 'No address'}</p>
-              <p><strong>Price:</strong> ${price || 'No price'}</p>
-              <p><strong>Description:</strong> ${description || 'No description'}</p>
-              <p><strong>Host:</strong> ${host || 'No host'}</p>
-              <p><strong>Phone Number:</strong> ${phoneNumber || 'No phone number'}</p>
-              <p><strong>Email:</strong> <a href="mailto:${email || '#'}">${email || 'No email'}</a></p>
-              <p><strong>District:</strong> ${district || 'No district'}</p>
-              <img src="${imageUrl || 'https://via.placeholder.com/600'}" alt="${name || 'No name'}" style="width: 100%; max-width: 600px; height: auto;">
-          `;
-      }
+              const [name, address, price, imageUrl, description, host, phoneNumber, email, district] = listing;
 
-      document.addEventListener('DOMContentLoaded', getRentalDetails);
+              const rentalDetailDiv = document.getElementById('rental-detail');
+              rentalDetailDiv.innerHTML = `
+                  <h2>${name || 'No name'}</h2>
+                  <p><strong>Address:</strong> ${address || 'No address'}</p>
+                  <p><strong>Price:</strong> ${price || 'No price'}</p>
+                  <p><strong>Description:</strong> ${description || 'No description'}</p>
+                  <p><strong>Host:</strong> ${host || 'No host'}</p>
+                  <p><strong>Phone Number:</strong> ${phoneNumber || 'No phone number'}</p>
+                  <p><strong>Email:</strong> <a href="mailto:${email || '#'}">${email || 'No email'}</a></p>
+                  <p><strong>District:</strong> ${district || 'No district'}</p>
+                  <img src="${imageUrl || 'https://via.placeholder.com/600'}" alt="${name || 'No name'}" style="width: 100%; max-width: 600px; height: auto;">
+              `;
+          }
+
+          getRentalDetails();
+      });
     </script>
 </head>
 <body>
